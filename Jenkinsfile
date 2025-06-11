@@ -4,16 +4,18 @@ pipeline {
     stages {
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh 'docker build -t hello-saurabh:latest .'
-                }
+                sh 'docker build -t hello-saurabh:latest .'
+                sh 'docker tag hello-saurabh:latest 8888998265/hello-saurabh:latest'
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Push to DockerHub') {
             steps {
-                script {
-                    sh 'docker run --rm hello-saurabh:latest'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                      echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                      docker push 8888998265/hello-saurabh:latest
+                    '''
                 }
             }
         }

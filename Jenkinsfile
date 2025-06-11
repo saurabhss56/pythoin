@@ -19,5 +19,23 @@ pipeline {
                 }
             }
         }
+
+        stage('Run Docker Container') {
+            steps {
+                sh '''
+                    docker rm -f hello-saurabh || true
+                    docker run -d --name hello-saurabh -p 8081:8080 8888998265/hello-saurabh:latest
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Image built, pushed, and deployed successfully!"
+        }
+        failure {
+            echo "❌ Something went wrong during the pipeline!"
+        }
     }
 }

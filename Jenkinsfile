@@ -2,15 +2,19 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone') {
+        stage('Build Docker Image') {
             steps {
-                echo 'Cloning repository...'
+                script {
+                    sh 'docker build -t hello-saurabh:latest .'
+                }
             }
         }
 
-        stage('Run Script') {
+        stage('Run Docker Container') {
             steps {
-                sh 'python3 hello.py'
+                script {
+                    sh 'docker run --rm hello-saurabh:latest'
+                }
             }
         }
     }
